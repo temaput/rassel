@@ -40,7 +40,6 @@ class CellBlockAbstract:
         return self.data
 
     def get_text(self):
-        print(self.template)
         return self.template.format(**self.get_data())[:self.maxSize]
 
 
@@ -264,7 +263,6 @@ class Document:
 
     def draw_blocks(self):
         for b in self.blocks:
-            print("printing block ", b)
             b(self.can, self.data).draw()
         self.can.save()
 
@@ -281,4 +279,4 @@ class Document:
         # finally, write "output" to a real file
         outputStream = self.destinationFile 
         output.write(outputStream)
-        outputStream.close()
+        # outputStream.close()
