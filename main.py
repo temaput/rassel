@@ -256,10 +256,12 @@ class Document:
 
               ]
 
-    def __init__(self, data):
+    def __init__(self, data, originalFile, destinationFile):
         self.packet = io.BytesIO()
         self.can = canvas.Canvas(self.packet, pagesize=legal, bottomup=0)
         self.data = data
+        self.originalFile = originalFile
+        self.destinationFile = destinationFile
 
     def draw_blocks(self):
         for b in self.blocks:
@@ -270,7 +272,7 @@ class Document:
     def finalize(self):
         new_pdf = PdfFileReader(self.packet)
         # read your existing PDF
-        existing_pdf = PdfFileReader(open("original.pdf", "rb"))
+        existing_pdf = PdfFileReader(self.originalFile)
         output = PdfFileWriter()
 
         # add the "watermark" (which is the new pdf) on the existing page
@@ -278,16 +280,20 @@ class Document:
         page.mergePage(new_pdf.getPage(0))
         output.addPage(page)
         # finally, write "output" to a real file
-        outputStream = open("destination.pdf", "wb")
+        outputStream = self.destinationFile 
         output.write(outputStream)
         outputStream.close()
 
 
-def main():
-    data = json.load(open("data.json", "r"))
-    doc = Document(data)
+def test():
+    data = json.load(open("stuff/data.json", "r"))
+    originalFile = open("resources/original.pdf", "rb")
+    outputFile =  open("stuff/destination.pdf", "wb")
+    doc = Document(data, originalFile, outputFile)
     doc.draw_blocks()
     doc.finalize()
 
 
-main()
+if __name__ == "__main__":
+    test()
+

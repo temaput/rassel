@@ -8,8 +8,9 @@ pylint = "*"
 
 [packages]
 reportlab = "*"
-pypdf = "*"
 pypdf2 = "*"
+functions-framework = "*"
+flask = "*"
 
 [requires]
-python_version = "3.7"
+python_version = "3.8"
