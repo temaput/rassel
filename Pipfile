@@ -11,6 +11,7 @@ reportlab = "*"
 pypdf2 = "*"
 functions-framework = "*"
 flask = "*"
+python-dateutil = "*"
 
 [requires]
 python_version = "3.8"

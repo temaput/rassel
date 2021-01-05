@@ -267,6 +267,7 @@ class Document:
         self.can.save()
 
     def finalize(self):
+        print("finalizing...")
         new_pdf = PdfFileReader(self.packet)
         # read your existing PDF
         existing_pdf = PdfFileReader(self.originalFile)
@@ -277,6 +278,7 @@ class Document:
         page.mergePage(new_pdf.getPage(0))
         output.addPage(page)
         # finally, write "output" to a real file
-        outputStream = self.destinationFile 
+        outputStream = self.destinationFile
+        print("writing output...")
         output.write(outputStream)
         # outputStream.close()
