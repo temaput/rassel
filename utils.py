@@ -79,19 +79,21 @@ OPTS_FIELDS = (
 )
 
 def process_option(s, opts):
-    for i, words in enumerate(opts):
+    for i, words in enumerate(opts, 1):
         if s.upper() in words:
-            return i
-    return len(opts) - 1
+            return i 
+    return len(opts)
 
 
 def process_date(s):
     d = parse_date(s)
     return d.isoformat()
 
+
 def process_gender(s):
     i = process_option(s, GENDER_OPTS)
-    return GENDERS[i]
+    return GENDERS[i-1]
+
 
 def process_survey(payload):
     if "sex" in payload:
@@ -102,5 +104,5 @@ def process_survey(payload):
     for fname in DATE_FNAMES:
         if fname in payload:
             payload[fname] = process_date(payload[fname])
-    
-    return payload
+
+    return payload 

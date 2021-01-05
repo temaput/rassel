@@ -9,7 +9,8 @@ def survey_pdf(request):
     request_json = request.get_json(silent=True)
     try:
         survey = process_survey(request_json["survey"])
-    except:
+    except Exception as e:
+        print("Error processing request:", e)
         abort(400)
     originalFile = open("resources/original.pdf", "rb")
     outputFile = tempfile.TemporaryFile(suffix=".pdf")

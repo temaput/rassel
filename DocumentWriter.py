@@ -3,7 +3,7 @@ import io
 from reportlab.pdfgen import canvas
 from reportlab.lib.pagesizes import legal
 from reportlab.lib.units import mm
-from datetime import date
+from datetime import datetime
 
 
 class CellBlockAbstract:
@@ -40,7 +40,10 @@ class CellBlockAbstract:
         return self.data
 
     def get_text(self):
-        return self.template.format(**self.get_data())[:self.maxSize]
+        try:
+            return self.template.format(**self.get_data())[:self.maxSize]
+        except (ValueError, KeyError):
+            return ""
 
 
 class FreeBlockAbstract(CellBlockAbstract):
@@ -59,17 +62,19 @@ class FirstRowBlock(CellBlockAbstract):
     y = 34.2
 
     def get_text(self):
-        if self.data["sex"] == "M":
-
-            self.template = "{dob:%m %d %Y}    X  {socSec:.11}"
+        if self.data.get("sex", None) == "M":
+            self.template = "{dob:%m %d %Y}    X        {socSec:.11}"
         else:
             self.template = "{dob:%m %d %Y}      X      {socSec:.11}"
         return super().get_text()
 
     def get_data(self):
-        copy = self.data.copy()
-        copy["dob"] = date.fromisoformat(copy["dob"])
-        return copy
+        if "dob" in self.data:
+            copy = self.data.copy()
+            copy["dob"] = datetime.fromisoformat(copy["dob"])
+            return copy
+        else:
+            return self.data
 
 
 class AddressBlock(CellBlockAbstract):
@@ -185,9 +190,12 @@ class SubscriberDOBBlock(FreeBlockAbstract):
     template = "{subscriberDOB:%m/%d/%Y}"
 
     def get_data(self):
-        copy = self.data.copy()
-        copy["subscriberDOB"] = date.fromisoformat(copy["subscriberDOB"])
-        return copy
+        if "subscriberDOB" in self.data:
+            copy = self.data.copy()
+            copy["subscriberDOB"] = datetime.fromisoformat(copy["subscriberDOB"])
+            return copy
+        else:
+            return self.data
 
 
 class OptionBlockAbstract(CellBlockAbstract):
@@ -196,7 +204,7 @@ class OptionBlockAbstract(CellBlockAbstract):
     defaultOrigin = (0, 0)
 
     def get_origin_by_option(self):
-        optionVal = self.get_data()[self.fname]
+        optionVal = self.get_data().get(self.fname, "")
         if isinstance(optionVal, int) and optionVal <= len(self.optionsRegions):
             return self.optionsRegions[optionVal-1]
         else:
@@ -207,7 +215,7 @@ class OptionBlockAbstract(CellBlockAbstract):
         self.t.setTextOrigin(x*mm + self.x_shift, y*mm + self.y_shift)
 
     def get_text(self):
-        optionVal = self.get_data()[self.fname]
+        optionVal = self.get_data().get(self.fname, "")
         if isinstance(optionVal, int) and optionVal <= len(self.optionsRegions):
             return "x"
         else:
