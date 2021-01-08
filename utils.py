@@ -1,4 +1,6 @@
 from dateutil.parser import parse as parse_date
+from collections import defaultdict
+
 DATE_FNAMES = (
     "dob",
     "subscriberDOB"
@@ -96,6 +98,8 @@ def process_gender(s):
 
 
 def process_survey(payload):
+    for fname in payload:
+        payload[fname] = str(payload[fname])
     if "sex" in payload:
         payload["sex"] = process_gender(payload["sex"])
     for fname, opts in OPTS_FIELDS:
@@ -105,4 +109,6 @@ def process_survey(payload):
         if fname in payload:
             payload[fname] = process_date(payload[fname])
 
-    return payload 
+    result = defaultdict(str)
+    result.update(payload)
+    return result

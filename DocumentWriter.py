@@ -41,8 +41,8 @@ class CellBlockAbstract:
 
     def get_text(self):
         try:
-            return self.template.format(**self.get_data())[:self.maxSize]
-        except (ValueError, KeyError):
+            return self.template.format_map(self.get_data())[:self.maxSize]
+        except (ValueError):
             return ""
 
 
@@ -92,7 +92,7 @@ class CityRow(CellBlockAbstract):
 class CellPhoneRow(CellBlockAbstract):
     x = 26.5
     y = 55
-    template = "{mob:<14.10}{country:<15.11}{country2:.10}"
+    template = "{mob:<14.10}{county:<15.11}{country:.10}"
 
 
 class RaceRow(CellBlockAbstract):
